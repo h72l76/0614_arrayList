@@ -16,6 +16,27 @@ private:
 
     bool isEmpty() const { return _size == 0; }
 
+    void doubleCapacity() {
+        // create new space;
+        T* temp = new T[_capacity * 2];
+        if (!temp) {
+            std::cerr << "fail to obtain space. program exit. \n";
+            exit(1);
+        }
+
+        // copy elements over from old space to new space
+        for (auto i = 0; i < _capacity; ++i) {
+            temp[i] = _arr[i];
+        }
+
+        // delete old space 
+        delete[] _arr; 
+        _arr = temp; 
+
+        // one last and most important step
+        _capacity *= 2; 
+    }
+
 public: 
     MyArrayList() :
         _arr{ new T[8] }, _size{ 0 }, _capacity{ 8 } {} 
@@ -37,7 +58,7 @@ public:
     void push_back(T t) {
         if (isFull())
         {
-            // doubleCapacity(); 
+             doubleCapacity(); 
             push_back(t); 
         }
         _arr[_size] = t; 
@@ -98,20 +119,42 @@ public:
         
         if (!goodIndex(index)) { std::cerr << "invalid index.\n"; exit(1); }
         if (isFull()) {
-            //doubleCapacity(); 
+            doubleCapacity(); 
             add_at_index(index, t); 
+            return;
         } 
         
-        for (int i = _size - 1; i >= index; --i) {
-            _arr[i + 1] = _arr[i]; 
+        for (size_t i = _size - 1; i >= index; --i) {
+            _arr[i + 1] = _arr[i];
+
+            if (i == 0) {
+                break; 
+            }
         }
+
         _arr[index] = t; 
 
         _size++; 
 
     }
 
+    void del_at_Index(int index) {
+        // invalid index 
+        if (!goodIndex(index)) {
+            std::cerr << "invalid index. \n";
+            exit(1);
+        }
+
+        for (auto i = index; i < _size - 1; i++) {
+            _arr[i] = _arr[i + 1]; 
+        }
+
+        _size--; 
+    }
 };
+
+
+
 
 template <class T> 
 void testFunction(const MyArrayList<T>& v) {
@@ -127,24 +170,31 @@ void testFunction(const MyArrayList<T>& v) {
 int main()
 {
     MyArrayList<int> v; 
-    v.push_back(10); 
-    v.push_back(20); 
-    v.push_back(10);
 
-    std::cout << v.front() << std::endl;
+    for (auto i : { 10, 20, 30, 40, 50, 60, 70 })
+        v.push_back(i);
 
-    v.back() = 30; 
+    v.add_at_index(0, 5); 
+    v.add_at_index(0, 0);
 
-    for (auto i = 0; i < v.size(); ++i) {
-        v.at(i) *= 2; 
-        std::cout << v.at(i) << std::endl;
+    for (int i = 0; i < v.size(); ++i) {
+        std::cout << v.at(i) << " ";
     }
+
+    std::cout << std::endl;
+
+    // delete number 10 at index 2 
+    v.del_at_Index(2); 
+
+    for (int i = 0; i < v.size(); ++i) {
+        std::cout << v.at(i) << " ";
+    }
+
+
+    
 
     //testFunction(v);
 
-
-    int s = 0 - 1; 
-    std::cout << s << std::endl;
     
 }
 
