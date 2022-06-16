@@ -58,8 +58,7 @@ public:
     void push_back(T t) {
         if (isFull())
         {
-             doubleCapacity(); 
-            push_back(t); 
+            doubleCapacity(); 
         }
         _arr[_size] = t; 
         _size++; 
